@@ -23,6 +23,7 @@ class StarredUsersPresenter: StarredUsersPresenterProtocol {
     }
     
     func showError() {
+        toggleLoading(false)
         starredUsersPresenterDelegate?.showError()
     }
     

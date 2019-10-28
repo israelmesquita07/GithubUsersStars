@@ -21,11 +21,22 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
     private var presenter:StarredUsersPresenter = StarredUsersPresenter()
     private var interactor:StarredUsersInteractor = StarredUsersInteractor()
     private var usersArray:[User] = []
-    private var activityIndicator = UIActivityIndicatorView()
+    private let activityIndicator = UIActivityIndicatorView()
     private var page = 1, totalPages = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupRefreshControl()
+        getUsers(page: page)
+    }
+    
+    private func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Atualizando usuários...")
+        refreshControl?.addTarget(self, action: #selector(refreshUsers(_:)), for: .valueChanged)
+    }
+    
+    @objc private func refreshUsers(_ sender: Any) {
         getUsers(page: page)
     }
     
@@ -78,6 +89,7 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
     }
     
     private func stopLoading() {
+        refreshControl?.endRefreshing()
         activityIndicator.stopAnimating()
         view.isUserInteractionEnabled = true
     }
