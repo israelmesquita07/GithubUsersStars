@@ -88,7 +88,6 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
 extension StarredUsersTableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("numero de users: \(usersArray.count)")
         return usersArray.count
     }
     
@@ -120,26 +119,4 @@ extension StarredUsersTableViewController {
             }
         }
     }
-    
-//    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-////        super.scrollViewDidEndDragging(scrollView, willDecelerate: decelerate)
-//        if scrollView == tableView {
-//
-//            if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height)
-//            {
-//                page+=1
-//                if !(page > totalPages){
-//                    getUsers(page: page)
-//
-//                } else {
-//                    page-=1
-//                    if (page > 0){
-//                        getUsers(page: page)
-//                    }
-//                }
-//            }
-//
-//        }
-//    }
-    
 }
