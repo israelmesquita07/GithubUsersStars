@@ -10,9 +10,9 @@ import Foundation
 
 class StarredUsersWorker {
     
-    func getUsers(onComplete:@escaping(Result) -> Void, onError:@escaping(Error) -> Void) {
+    func getUsers(page:Int, onComplete:@escaping(Result) -> Void, onError:@escaping(Error) -> Void) {
         
-        API.getUsers(onComplete: { (result) in
+        API.getUsers(page: page, onComplete: { (result) in
             onComplete(result)
         }) { (error) in
             onError(error)

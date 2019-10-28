@@ -9,13 +9,13 @@
 import Foundation
 
 protocol APIService {
-    static func getUsers(onComplete:@escaping(Result) -> Void, onError:@escaping(Error) -> Void)
+    static func getUsers(page:Int, onComplete:@escaping(Result) -> Void, onError:@escaping(Error) -> Void)
 }
 
 class API: APIService {
     
-    static func getUsers(onComplete:@escaping(Result) -> Void, onError:@escaping(Error) -> Void) {
-        if let url = URL(string: Endpoint.baseUrl) {
+    static func getUsers(page:Int, onComplete:@escaping(Result) -> Void, onError:@escaping(Error) -> Void) {
+        if let url = URL(string: "\(Endpoint.baseUrl)\(page)") {
             let dataTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
                 
                 if error == nil {

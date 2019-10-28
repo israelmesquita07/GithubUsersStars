@@ -9,7 +9,7 @@
 import Foundation
 
 protocol StarredUsersInteractorProtocol {
-    func getUsers()
+    func getUsers(page:Int)
 }
 
 class StarredUsersInteractor: StarredUsersInteractorProtocol {
@@ -17,17 +17,13 @@ class StarredUsersInteractor: StarredUsersInteractorProtocol {
     var starredUsersInteractorDelegate: StarredUsersPresenterProtocol?
     private var worker: StarredUsersWorker?
     
-    func getUsers() {
+    func getUsers(page:Int) {
      
         starredUsersInteractorDelegate?.toggleLoading(true)
         worker = StarredUsersWorker()
-        worker?.getUsers(onComplete: { [weak self] (result) in
+        worker?.getUsers(page: page, onComplete: { [weak self] (result) in
             guard let self = self else { return }
-            guard let users = result.items else {
-                self.starredUsersInteractorDelegate?.showError()
-                return
-            }
-            self.starredUsersInteractorDelegate?.showUsers(users: users)
+            self.starredUsersInteractorDelegate?.showUsers(result: result)
         }, onError: { (error) in
             self.starredUsersInteractorDelegate?.showError()
         })

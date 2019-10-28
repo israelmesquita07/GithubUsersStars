@@ -10,6 +10,12 @@ import Foundation
 
 struct Result: Decodable {
     let items: [User]?
+    let totalCount:Int?
+    
+    enum CodingKeys:String, CodingKey {
+        case items
+        case totalCount = "total_count"
+    }
 }
 
 struct User: Decodable {

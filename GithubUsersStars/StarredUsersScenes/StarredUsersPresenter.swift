@@ -9,7 +9,7 @@
 import Foundation
 
 protocol StarredUsersPresenterProtocol {
-    func showUsers(users: [User])
+    func showUsers(result: Result)
     func showError()
     func toggleLoading(_ bool:Bool)
 }
@@ -18,8 +18,8 @@ class StarredUsersPresenter: StarredUsersPresenterProtocol {
     
     var starredUsersPresenterDelegate: StarredUsersViewControllerProtocol?
     
-    func showUsers(users: [User]) {
-        starredUsersPresenterDelegate?.showUsers(users: users)
+    func showUsers(result: Result) {
+        starredUsersPresenterDelegate?.showUsers(result: result)
     }
     
     func showError() {

@@ -9,8 +9,8 @@
 import UIKit
 
 protocol StarredUsersViewControllerProtocol {
-    func getUsers()
-    func showUsers(users: [User]?)
+    func getUsers(page:Int)
+    func showUsers(result: Result?)
     func showError()
     func toggleLoading(_ bool:Bool)
 }
@@ -21,21 +21,26 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
     private var presenter:StarredUsersPresenter = StarredUsersPresenter()
     private var interactor:StarredUsersInteractor = StarredUsersInteractor()
     private var usersArray:[User] = []
+    private var activityIndicator = UIActivityIndicatorView()
+    private var page = 1, totalPages = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getUsers()
+        getUsers(page: page)
     }
     
-    func getUsers() {
+    func getUsers(page:Int) {
+        toggleLoading(true)
         presenter.starredUsersPresenterDelegate = self
         interactor.starredUsersInteractorDelegate = presenter
-        interactor.getUsers()
+        interactor.getUsers(page: page)
     }
     
-    func showUsers(users: [User]?) {
-        guard let users = users else { return }
-        usersArray = users
+    func showUsers(result: Result?) {
+        guard let users = result?.items else { return }
+        guard let totalPagesInResult = result?.totalCount else { return }
+        usersArray.append(contentsOf: users)
+        totalPages = totalPagesInResult
         DispatchQueue.main.async {
             self.tableView.reloadData()
             self.toggleLoading(false)
@@ -48,10 +53,10 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
     
     func toggleLoading(_ bool: Bool) {
         if bool {
-//            loadingView.isHidden = false
-//            activityIndicator.startAnimating()
+            startLoading()
             return
         }
+        stopLoading()
     }
     
     private func showAlert(title:String, message:String) {
@@ -61,6 +66,21 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
         present(alert, animated: true, completion: nil)
     }
     
+    private func startLoading() {
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .medium
+        activityIndicator.transform = CGAffineTransform(scaleX: 2.5, y: 2.5)
+        activityIndicator.startAnimating()
+        
+        view.addSubview(activityIndicator)
+        view.isUserInteractionEnabled = false
+    }
+    
+    private func stopLoading() {
+        activityIndicator.stopAnimating()
+        view.isUserInteractionEnabled = true
+    }
 }
 
 
@@ -68,6 +88,7 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
 extension StarredUsersTableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print("numero de users: \(usersArray.count)")
         return usersArray.count
     }
     
@@ -77,8 +98,10 @@ extension StarredUsersTableViewController {
         
         let user = usersArray[indexPath.row]
         cell.textLabel?.text = user.name
-        cell.detailTextLabel?.text = "\(user.owner?.login ?? "Username")(\(user.stargazers_count ?? 0) estrelas)"
         cell.imageView?.imageFromServerURL(urlString: user.owner?.avatarUrl ?? "", defaultImage: "githubImage")
+        if let username = user.owner?.login, let countStars = user.stargazers_count {
+            cell.detailTextLabel?.text = "\(username) (\(countStars) estrelas)"
+        }
         
         return cell
     }
@@ -86,5 +109,37 @@ extension StarredUsersTableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        let lastItem = usersArray.count - 1
+        if indexPath.row == lastItem {
+            page+=1
+            if !(page > totalPages){
+                getUsers(page: page)
+            }
+        }
+    }
+    
+//    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+////        super.scrollViewDidEndDragging(scrollView, willDecelerate: decelerate)
+//        if scrollView == tableView {
+//
+//            if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height)
+//            {
+//                page+=1
+//                if !(page > totalPages){
+//                    getUsers(page: page)
+//
+//                } else {
+//                    page-=1
+//                    if (page > 0){
+//                        getUsers(page: page)
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
     
 }
