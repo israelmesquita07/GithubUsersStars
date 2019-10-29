@@ -59,7 +59,9 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
     }
     
     func showError() {
-        showAlert(title: "Ops!", message: "Ocorreu um erro!")
+        DispatchQueue.main.async {
+            self.showAlert(title: "Ops!", message: "Ocorreu um erro!")
+        }
     }
     
     func toggleLoading(_ bool: Bool) {
@@ -89,9 +91,12 @@ class StarredUsersTableViewController: UITableViewController, StarredUsersViewCo
     }
     
     private func stopLoading() {
-        refreshControl?.endRefreshing()
-        activityIndicator.stopAnimating()
-        view.isUserInteractionEnabled = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.refreshControl?.endRefreshing()
+            self.activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+        }
     }
 }
 
@@ -109,7 +114,7 @@ extension StarredUsersTableViewController {
         
         let user = usersArray[indexPath.row]
         cell.textLabel?.text = user.name
-        cell.imageView?.imageFromServerURL(urlString: user.owner?.avatarUrl ?? "", defaultImage: "githubImage")
+        cell.imageView?.imageFromServerURL(urlString: user.owner?.avatarUrl ?? "", defaultImage: "iTunesArtwork")
         if let username = user.owner?.login, let countStars = user.stargazers_count {
             cell.detailTextLabel?.text = "\(username) (\(countStars) estrelas)"
         }
