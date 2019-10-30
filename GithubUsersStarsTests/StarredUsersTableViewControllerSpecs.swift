@@ -75,7 +75,8 @@ class StarredUsersTableViewControllerSpecs: QuickSpec {
             
             context("snapshots") {
                 it("should match StarredUsersTableViewController snapshot") {
-                    //expect(self.sut) == recordSnapshot("StarredUsersTableViewController")
+                    //usado para gerar o reference images - iPhone 11 Pro
+//                    expect(self.sut) == recordSnapshot("StarredUsersTableViewController")
                     expect(self.sut) == snapshot("StarredUsersTableViewController")
                 }
             }
