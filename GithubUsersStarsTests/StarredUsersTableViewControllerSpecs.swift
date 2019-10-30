@@ -9,6 +9,7 @@
 import Foundation
 import Quick
 import Nimble
+import Nimble_Snapshots
 
 @testable import GithubUsersStars
 
@@ -44,6 +45,14 @@ class StarredUsersTableViewControllerSpecs: QuickSpec {
                 it("showError") {
                     self.sut.showError()
                 }
+                
+                it("stopLoading") {
+                    self.sut.toggleLoading(false)
+                }
+                
+                it("load image") {
+                    UIImageView().imageFromServerURL(urlString: "https://avatars3.githubusercontent.com/u/7774181?v=4", defaultImage: "iTunesArtwork")
+                }
             }
             
             context("test result") {
@@ -61,6 +70,13 @@ class StarredUsersTableViewControllerSpecs: QuickSpec {
                 
                 afterEach {
                     self.result = nil
+                }
+            }
+            
+            context("snapshots") {
+                it("should match StarredUsersTableViewController snapshot") {
+                    //expect(self.sut) == recordSnapshot("StarredUsersTableViewController")
+                    expect(self.sut) == snapshot("StarredUsersTableViewController")
                 }
             }
             
